@@ -1,438 +1,212 @@
 # Universidad Tecnológica de Panamá
 
-# Facultad de Ingeniería de Sistemas Computacionales
-
+**Facultad de Ingeniería de Sistemas Computacionales**  
 **Campus Víctor Levis Sasso**
 
----
+# Parte práctica del Parcial 3
 
-# Lab MVP - Parcial Práctico
-
-Aplicación de escritorio en C# con Windows Forms que implementa el patrón de diseño **MVP (Modelo - Vista - Presentador)** sobre una arquitectura en capas. Incluye inicio de sesión con contraseñas protegidas mediante hash, una ventana principal MDI con menú lateral, un juego de Craps y un módulo CRUD de productos con manejo de imágenes.
-
-| | |
-| :--- | :--- |
-| **Asignatura** | Herramientas de la Programación Aplicada III (.Net) |
-| **Grupo** | 1IL133 |
-| **Instructora** | Ing. Irina Fong |
-| **Estudiante** | Kankibe González |
-| **Fecha** | 8 de noviembre de 2026 |
+**Asignatura:** Herramientas de la Programación Aplicada III (.Net)  
+**Grupo:** 1IL133  
+**Instructora:** Ing. Irina Fong  
+**Estudiante:** Kankibe González  
+**Fecha:** 9 de noviembre de 2026
 
 ---
 
-## Tabla de contenido
+## Descripción general
 
-1. [Objetivos](#objetivos)
-2. [Introducción](#introducción)
-3. [Tecnologías y versiones](#tecnologías-y-versiones)
-4. [Arquitectura del proyecto](#arquitectura-del-proyecto)
-5. [Patrón MVP](#patrón-mvp)
-6. [Seguridad: hash y verificación de contraseñas](#seguridad-hash-y-verificación-de-contraseñas)
-7. [Base de datos y conexión con privilegios mínimos](#base-de-datos-y-conexión-con-privilegios-mínimos)
-8. [Resultados: ventana principal MDI](#resultados-ventana-principal-mdi)
-9. [Resultados: juego de Craps](#resultados-juego-de-craps)
-10. [Módulo de productos (CRUD)](#módulo-de-productos-crud)
-11. [Resultados: validaciones](#resultados-validaciones)
-12. [Controles utilizados](#controles-utilizados)
-13. [Guía de instalación y ejecución](#guía-de-instalación-y-ejecución)
-14. [Documentación del código](#documentación-del-código)
-15. [Información del estudiante](#información-del-estudiante)
+Este repositorio contiene los ejercicios desarrollados para la parte práctica del Parcial 3. Está organizado en tres proyectos de consola realizados en C# con .NET 8.0:
 
----
+1. **Parte1_Figuras:** implementación de una clase abstracta para representar figuras geométricas y calcular sus áreas y perímetros.
+2. **Parte2_Json:** creación de un objeto y conversión de sus datos a formato JSON utilizando Newtonsoft.Json.
+3. **Parte3_Login:** sistema de registro e inicio de sesión conectado a MySQL. Utiliza BCrypt para proteger las contraseñas y registra los intentos de inicio de sesión.
 
-## Objetivos
+## Tecnologías utilizadas
 
-- Implementar el patrón de diseño **MVP** separando la interfaz (Vista), la lógica de presentación (Presentador) y la lógica de negocio y datos (Modelo).
-- Crear **dos contratos independientes** (interfaces) en la capa de Negocio: uno para generar el hash de una contraseña y otro para verificarla.
-- Establecer una **conexión específica a la base de datos con privilegios mínimos**, de modo que la aplicación no use el usuario administrador (`root`).
-- Construir una ventana principal **MDI con menú lateral izquierdo**, que muestre la hora actual y, en la parte inferior, el usuario que inició sesión.
-- Integrar varios módulos (juego de Craps y CRUD de productos) dentro de la misma aplicación como ventanas hijas.
-- Validar los datos del usuario antes de enviarlos a la base de datos.
-
-## Introducción
-
-El proyecto parte de un inicio de sesión (login) con registro de usuarios. Las contraseñas nunca se guardan en texto plano: se almacena un **salt** aleatorio por usuario y el **hash SHA-256** de la combinación `salt + contraseña`. Al iniciar sesión, la capa de Negocio vuelve a calcular el hash con el salt guardado y lo compara con el almacenado.
-
-Una vez dentro, el usuario accede a una ventana principal MDI con un menú lateral desde el cual puede abrir el **juego de Craps**, el **módulo de productos**, organizar las ventanas abiertas (cascada o mosaico) y cerrar la sesión. El menú muestra un reloj en tiempo real y, abajo, el nombre y el correo del usuario con la sesión activa.
-
-Toda la comunicación con la base de datos se hace mediante **procedimientos almacenados**, y el usuario de la aplicación solo tiene permiso para ejecutarlos; no puede leer ni modificar las tablas directamente.
-
-## Tecnologías y versiones
-
-| Tecnología | Versión | Uso |
-| :--- | :--- | :--- |
-| C# | 7.3 | Lenguaje de programación |
-| .NET Framework | 4.7.2 | Plataforma de ejecución (Windows Forms) |
-| Windows Forms | .NET Framework 4.7.2 | Interfaz gráfica |
+| Tecnología | Versión / paquete | Uso |
+|---|---|---|
+| C# | .NET 8.0 | Desarrollo de los tres ejercicios |
 | Visual Studio | 2026 | Entorno de desarrollo |
-| MySQL Server | 8.0.46 | Motor de base de datos |
-| MySQL Workbench | 8.0 | Administración y ejecución de scripts SQL |
-| MySql.Data (NuGet) | 26.10.0 | Conector de C# para MySQL |
-| SHA-256 (`System.Security.Cryptography`) | Incluido en .NET Framework | Generación del hash de contraseñas |
-| Git / GitHub | - | Control de versiones y repositorio |
+| Newtonsoft.Json | 13.0.3 | Serialización de objetos a JSON |
+| BCrypt.Net-Next | 4.2.0 | Generación y verificación de hashes de contraseñas |
+| MySqlConnector | 2.6.2 | Conexión entre C# y MySQL |
+| MySQL Server | 8.0.46 | Almacenamiento de usuarios e intentos de inicio de sesión |
+| MySQL Workbench | 8.0 | Administración de la base de datos |
 
-## Arquitectura del proyecto
+---
 
-La solución `LabMVP` está dividida en cuatro proyectos (capas):
+## Estructura del proyecto
 
-```
-LabMVP/
-├── Entidades/                    Clases que representan los datos
-│   ├── E_Usuario.cs
-│   └── E_Producto.cs
+```text
+Parcial3/
+├── imagenes_Captura de pantallas/
+│   ├── Captura de pantalla 2026-11-09 105849.png
+│   ├── Captura de pantalla 2026-11-09 105857.png
+│   ├── Captura de pantalla 2026-11-09 105904.png
+│   ├── Captura de pantalla 2026-11-09 105914.png
+│   ├── Captura de pantalla 2026-11-09 110800.png
+│   └── Captura de pantalla 2026-11-09 110918.png
 │
-├── Datos/                        Acceso a MySQL (solo procedimientos almacenados)
-│   ├── Conexion.cs               Conexión con el usuario de privilegios mínimos
-│   ├── D_Usuario.cs
-│   └── D_Producto.cs
+├── Parte1_Figuras/
+│   ├── Class1.cs
+│   ├── figura.cs
+│   └── Parte1_Figuras.csproj
 │
-├── Negocio/                      Reglas de negocio y contratos
-│   ├── Interfaces/
-│   │   ├── IHashService.cs               Contrato 1: generar el hash
-│   │   └── IVerificarHashService.cs      Contrato 2: verificar el hash
-│   ├── Servicios/
-│   │   ├── HashService.cs                SHA-256 con salt
-│   │   └── VerificarHashService.cs
-│   ├── Validaciones/
-│   │   ├── IValidadorCampo.cs
-│   │   └── Validadores.cs                ValidadorTexto / Decimal / Entero
-│   ├── N_Usuario.cs              Login y registro
-│   ├── N_Producto.cs             CRUD y validaciones de productos
-│   ├── N_Craps.cs                Reglas del juego de Craps
-│   ├── ErroresProducto.cs
-│   └── Sesion.cs                 Usuario que inició sesión
+├── Parte2_Json/
+│   ├── Program.cs
+│   └── Parte2_Json.csproj
 │
-└── Presentacion/                 Windows Forms (MVP)
-    ├── Interfaces/               Contratos de cada Vista
-    │   ├── ILoginView.cs
-    │   ├── IPrincipalView.cs
-    │   ├── ICrapsView.cs
-    │   └── IProductosView.cs
-    ├── Presentadores/            Un presentador por cada Vista
-    │   ├── LoginPresenter.cs
-    │   ├── PrincipalPresenter.cs
-    │   ├── CrapsPresenter.cs
-    │   └── ProductosPresenter.cs
-    ├── Vistas/                   Formularios (solo controles)
-    │   ├── FrmLogin.cs
-    │   ├── FrmPrincipal.cs       Contenedor MDI
-    │   ├── FrmCraps.cs
-    │   └── FrmProductos.cs
-    ├── ImagenHelper.cs           Imagen <-> bytes
-    └── Program.cs
+└── Parte3_Login/
+    └── Parte3_Login/
+        ├── Program.cs
+        ├── Loginservicio.cs
+        ├── Conexion.cs
+        ├── Backup_parte3_parcial3.sql
+        └── Parte3_Login.csproj
 ```
 
-Dependencias entre capas: `Presentacion` usa `Negocio` y `Entidades`; `Negocio` usa `Datos` y `Entidades`; `Datos` usa `Entidades`. La Vista nunca accede a la base de datos.
+## Parte 1: Figuras geométricas
 
-## Patrón MVP
+En este ejercicio se utiliza la herencia y el polimorfismo mediante una clase abstracta llamada `Figura`. Esta clase define dos métodos abstractos:
 
-| Componente | En este proyecto | Responsabilidad |
-| :--- | :--- | :--- |
-| **Modelo** | `Entidades`, `Datos` y `Negocio` | Datos, reglas de negocio y acceso a la base de datos. |
-| **Vista** | `Frm*.cs` (implementan `I*View`) | Mostrar controles y avisar al Presentador cuando el usuario hace algo. No valida, no usa SQL ni conoce el hash. |
-| **Presentador** | `*Presenter.cs` | Recibe las acciones de la Vista, le pide el trabajo al Negocio y le ordena a la Vista qué mostrar. |
+- `CalcularArea()`: obtiene el área de la figura.
+- `CalcularPerimetro()`: obtiene el perímetro de la figura.
 
-Flujo de una acción (ejemplo: iniciar sesión):
+Se implementan tres clases derivadas:
 
+| Clase | Datos utilizados | Área | Perímetro |
+|---|---|---|---|
+| `Rectangulo` | Base y altura | base × altura | 2 × (base + altura) |
+| `Cuadrado` | Lado | lado × lado | 4 × lado |
+| `Triangulo` | Base, altura y dos lados adicionales | (base × altura) / 2 | base + lado 2 + lado 3 |
+
+En `Main` se crea un arreglo de tipo `Figura` que almacena un rectángulo, un cuadrado y un triángulo. Luego se recorre el arreglo para mostrar el nombre de cada clase, su área y su perímetro. Esto permite utilizar objetos de distintas clases mediante una misma referencia de tipo `Figura`.
+
+### Ejecución
+
+Desde la carpeta `Parte1_Figuras`, ejecutar:
+
+```bash
+dotnet run
 ```
-FrmLogin (Vista)  --evento IngresarClick-->  LoginPresenter
-LoginPresenter    --IniciarSesion()------->  N_Usuario (Negocio)
-N_Usuario         --ObtenerPorCorreo()---->  D_Usuario (Datos) --> sp_obtener_usuario (MySQL)
-N_Usuario         --Verificar()----------->  IVerificarHashService
-LoginPresenter    --AbrirPrincipal() o MostrarMensaje()--> FrmLogin
+
+**Resultado:** se muestran los cálculos de las tres figuras geométricas en la consola.
+
+![Resultado de figuras geométricas](imagenes_Captura%20de%20pantallas/Captura%20de%20pantalla%202026-11-09%20110800.png)
+
+---
+
+## Parte 2: Serialización a JSON
+
+Este ejercicio utiliza el paquete **Newtonsoft.Json** para convertir un objeto de C# en una cadena con formato JSON.
+
+Se crea un objeto anónimo con los siguientes datos:
+
+- **Nombre:** Cristell
+- **Edad:** 20
+- **Carrera:** Ingeniería en Sistemas
+
+Después, se utiliza `JsonConvert.SerializeObject()` para convertir el objeto en una cadena JSON y mostrarla en la consola.
+
+### Ejecución
+
+Desde la carpeta `Parte2_Json`, ejecutar:
+
+```bash
+dotnet restore
+dotnet run
 ```
 
-Cada Vista implementa una **interfaz** (`ILoginView`, `ICrapsView`, etc.), por lo que el Presentador depende de un contrato y no de un formulario concreto. Esto permite probar los presentadores sin abrir ventanas.
+El proyecto utiliza el paquete `Newtonsoft.Json` versión `13.0.3`, declarado en el archivo `.csproj`.
 
-## Seguridad: hash y verificación de contraseñas
+**Resultado:** se muestra el mensaje inicial y la información del objeto convertida a JSON.
 
-En la capa de Negocio se crearon **dos contratos independientes**, cada uno con una única responsabilidad:
+![Resultado de serialización JSON](imagenes_Captura%20de%20pantallas/Captura%20de%20pantalla%202026-11-09%20110918.png)
+
+---
+
+## Parte 3: Login con BCrypt y MySQL
+
+Este ejercicio implementa un sistema de registro e inicio de sesión desde la consola, conectado a una base de datos MySQL llamada `loginbcrypt`.
+
+### Registro de usuarios
+
+El sistema solicita el nombre completo, el nombre de usuario y la contraseña. Antes de guardar la información, la contraseña se procesa con:
 
 ```csharp
-// Contrato 1: solo genera el hash
-public interface IHashService
-{
-    string GenerarHash(string textoPlano, string salt);
-}
-
-// Contrato 2: solo verifica una contraseña contra el hash guardado
-public interface IVerificarHashService
-{
-    bool Verificar(string textoPlano, string salt, string hashAlmacenado);
-}
+BCrypt.Net.BCrypt.HashPassword(clave)
 ```
 
-- `HashService` implementa `IHashService` con **SHA-256**: calcula el hash de `salt + contraseña` y lo devuelve en hexadecimal minúscula (64 caracteres).
-- `VerificarHashService` implementa `IVerificarHashService` y recibe un `IHashService` por el constructor: vuelve a generar el hash con el mismo salt y lo compara con el almacenado.
-- `N_Usuario` genera un **salt aleatorio de 32 caracteres hexadecimales** (con `RNGCryptoServiceProvider`) cada vez que se registra un usuario.
+De esta manera, la base de datos almacena el hash generado y no la contraseña original. Si el registro se completa, se muestra un mensaje de confirmación. Si ocurre un error al insertar el usuario, se informa que no fue posible registrarlo, por ejemplo, cuando el nombre de usuario ya existe.
 
-Ventajas de este diseño:
+### Inicio de sesión
 
-- **Desacoplamiento:** si mañana se cambia SHA-256 por BCrypt o Argon2, solo cambia la clase que implementa la interfaz; no se tocan la Vista, el Presentador ni la base de datos.
-- **Responsabilidad única:** generar un hash y comprobarlo son acciones separadas, cada una con su contrato.
-- **Pruebas:** `N_Usuario` tiene un segundo constructor que recibe ambos contratos, por lo que se pueden reemplazar por versiones de prueba.
-- Al iniciar sesión, el mensaje de error es el mismo si el correo no existe o si la contraseña es incorrecta, para no revelar cuáles correos están registrados.
-
-## Base de datos y conexión con privilegios mínimos
-
-### Estructura de datos
-
-**Tabla `usuarios`**
-
-| Campo | Tipo | Nulo | Clave | Descripción |
-| :--- | :--- | :--- | :--- | :--- |
-| `id` | `INT` | NO | PRI (`AUTO_INCREMENT`) | Identificador del usuario |
-| `nombre` | `VARCHAR(100)` | NO | | Nombre del usuario |
-| `correo` | `VARCHAR(100)` | NO | UNI | Correo (se usa para iniciar sesión) |
-| `salt` | `VARCHAR(50)` | NO | | Texto aleatorio que se mezcla con la contraseña |
-| `password_hash` | `CHAR(64)` | NO | | Hash SHA-256 en hexadecimal |
-| `activo` | `TINYINT(1)` | NO | | 1 = activo, 0 = deshabilitado |
-| `fecha_creacion` | `DATETIME` | NO | | Fecha de registro |
-
-**Tabla `productos`**
-
-| Campo | Tipo | Nulo | Clave | Descripción |
-| :--- | :--- | :--- | :--- | :--- |
-| `id` | `INT` | NO | PRI (`AUTO_INCREMENT`) | Identificador único del producto |
-| `nombre` | `VARCHAR(100)` | NO | | Nombre o descripción del producto |
-| `precio` | `DECIMAL(10,2)` | NO | | Precio unitario (mayor o igual a 0) |
-| `cantidad` | `INT` | NO | | Unidades en inventario (mayor o igual a 0) |
-| `imagen` | `LONGBLOB` | SÍ | | Imagen en formato binario (PNG) |
-
-### Procedimientos almacenados
-
-| Procedimiento | Uso |
-| :--- | :--- |
-| `sp_obtener_usuario(p_correo)` | Devuelve el usuario activo con ese correo (la app compara el hash en C#). |
-| `sp_insertar_usuario(...)` | Registra un usuario nuevo con su salt y hash. |
-| `sp_listar_productos(p_filtro)` | Lista los productos; con filtro busca en id, nombre, precio y cantidad. |
-| `sp_insertar_producto(...)` | Guarda un producto nuevo. |
-| `sp_actualizar_producto(...)` | Actualiza un producto existente. |
-| `sp_eliminar_producto(p_id)` | Borra un producto. |
-
-### Usuario de la aplicación (privilegios mínimos)
-
-La aplicación **no usa `root`**. Se conecta con un usuario propio, `app_lab`, que solo puede ejecutar los procedimientos almacenados de la base `lab_mvp`:
-
-```sql
-CREATE USER 'app_lab'@'localhost' IDENTIFIED BY 'Lab_2026*';
-GRANT EXECUTE ON lab_mvp.* TO 'app_lab'@'localhost';
-```
-
-La conexión está centralizada en `Datos/Conexion.cs`, que construye la cadena con ese usuario. Con este esquema, si la aplicación fuera comprometida, el atacante no podría leer ni modificar las tablas directamente. Se puede comprobar con una conexión de `app_lab`:
-
-```sql
-CALL lab_mvp.sp_obtener_usuario('admin@lab.com');   -- funciona
-SELECT * FROM lab_mvp.usuarios;                     -- error: permiso denegado
-```
-
-## Resultados: ventana principal MDI
-
-La ventana principal es un contenedor **MDI**. Tiene un **menú lateral izquierdo** con:
-
-- El nombre de la aplicación y un **reloj en tiempo real** (hora y fecha en español).
-- Botón **Juego de Craps**: abre el juego dentro del MDI.
-- Botón **Productos**: abre el CRUD de productos dentro del MDI (si ya está abierto, lo trae al frente).
-- Botón **Organizar ventanas**: alterna entre cascada y mosaico.
-- Botón **Cerrar sesión**: borra la sesión y vuelve al login.
-- En la **parte inferior**, el usuario que inició sesión (nombre y correo).
-
-**Captura 1 - Inicio de sesión (login)**
-
-> **[ PEGAR CAPTURA AQUÍ ]**
-> Pantalla de login con los campos de correo y contraseña.
-
-**Captura 2 - Ventana principal MDI con el menú lateral**
-
-> **[ PEGAR CAPTURA AQUÍ ]**
-> Menú lateral con el reloj arriba y el usuario con sesión iniciada en la parte inferior.
-
-**Captura 3 - Varias ventanas hijas abiertas dentro del MDI**
-
-> **[ PEGAR CAPTURA AQUÍ ]**
-> Craps y Productos abiertos al mismo tiempo, organizados en cascada o mosaico.
-
-## Resultados: juego de Craps
-
-La lógica del juego está en `Negocio/N_Craps.cs` (no tiene ventanas ni controles). Se juega con dos dados:
-
-- **Primer tiro:** si la suma es 7 u 11 el jugador gana; si es 2, 3 o 12 pierde (craps); cualquier otro número se convierte en su **punto**.
-- **Tiros siguientes:** si saca su punto gana; si sale 7 pierde; con cualquier otro número sigue tirando.
-- La ventana lleva un **marcador** de partidas ganadas y perdidas, y el botón **Nuevo juego** reinicia la partida sin borrar el marcador.
-
-**Captura 4 - Craps: primer tiro**
-
-> **[ PEGAR CAPTURA AQUÍ ]**
-> Dados, suma y mensaje después del primer tiro (por ejemplo, con un punto asignado).
-
-**Captura 5 - Craps: resultado de la partida**
-
-> **[ PEGAR CAPTURA AQUÍ ]**
-> Mensaje de victoria o derrota y marcador actualizado.
-
-## Módulo de productos (CRUD)
-
-Módulo integrado al MVP que permite **crear, leer, actualizar y borrar** productos con su nombre, precio, cantidad e imagen.
-
-- **Guardar:** valida los campos y registra el producto nuevo.
-- **Listar y buscar:** el grid muestra todos los productos; al escribir en el campo de búsqueda (o pulsar la lupa) se filtra por id, nombre, precio o cantidad.
-- **Seleccionar:** al elegir una fila, sus datos pasan a los campos del formulario para editarlos.
-- **Modificar:** actualiza el producto seleccionado.
-- **Borrar:** pide confirmación y elimina el producto seleccionado.
-- **Limpiar:** vacía el formulario y vuelve al modo de creación.
-- **Imágenes:** al hacer clic en el cuadro de imagen se abre un selector de archivos (jpg, png, bmp). La clase `ImagenHelper` convierte la imagen a `byte[]` (PNG) para guardarla en la columna `LONGBLOB` y la reconstruye al leerla. En el grid se muestran miniaturas de 80 x 60 píxeles. Si el producto no tiene foto, se guarda sin imagen.
-
-Los eventos de los botones los recibe el `ProductosPresenter`, que usa a `N_Producto` para validar y guardar, y le ordena a `FrmProductos` qué mostrar.
-
-**Captura 6 - Módulo de productos**
-
-> **[ PEGAR CAPTURA AQUÍ ]**
-> Formulario con el grid de productos y las miniaturas de las imágenes.
-
-**Captura 7 - Producto seleccionado**
-
-> **[ PEGAR CAPTURA AQUÍ ]**
-> Datos del producto cargados en los campos, con la imagen original en el cuadro de la derecha.
-
-## Resultados: validaciones
-
-### Login y registro (`N_Usuario`)
-
-- El correo no puede estar vacío y debe tener un formato válido (`algo@algo.algo`).
-- La contraseña no puede estar vacía; para registrarse debe tener **al menos 6 caracteres**.
-- El nombre es obligatorio al registrarse.
-- No se permiten dos usuarios con el mismo correo.
-- Si el correo o la contraseña son incorrectos se muestra el mismo mensaje: "Correo o contraseña incorrectos."
-
-### Productos (`N_Producto`)
-
-Las validaciones usan una interfaz que actúa como contrato:
+El usuario introduce su nombre de usuario y contraseña. El programa consulta el hash almacenado en MySQL y utiliza:
 
 ```csharp
-public interface IValidadorCampo
-{
-    bool EsValido(string valor);
-    string MensajeError { get; }
-}
+BCrypt.Net.BCrypt.Verify(clave, hashGuardado)
 ```
 
-Cada tipo de dato tiene su propia clase que la implementa:
+BCrypt comprueba si la contraseña ingresada corresponde al hash guardado. Si los datos son correctos, el programa muestra el nombre completo y el usuario. En caso contrario, muestra el mensaje de usuario o contraseña incorrectos.
 
-- **ValidadorTexto:** el nombre no puede estar vacío ni pasar de 100 caracteres.
-- **ValidadorDecimal:** el precio debe ser un número decimal válido, no negativo y que quepa en `DECIMAL(10,2)`. Acepta punto o coma decimal.
-- **ValidadorEntero:** la cantidad debe ser un número entero válido y no negativo.
+### Registro de intentos
 
-Si algún campo falla, el Presentador le ordena a la Vista mostrar un icono de error junto al campo (componente `ErrorProvider`) con su mensaje, y no se guarda nada. Cuando el campo se corrige, el icono desaparece.
+Cada inicio de sesión genera un registro en la tabla `intentoslogin`, tanto si el acceso fue correcto como si fue fallido. Se almacena el nombre de usuario, el resultado del intento y la fecha.
 
-**Captura 8 - Validación en el login**
+### Base de datos
 
-> **[ PEGAR CAPTURA AQUÍ ]**
-> Mensaje de error al ingresar con credenciales incorrectas o con campos vacíos.
+El archivo `Backup_parte3_parcial3.sql` contiene el respaldo de la base de datos `loginbcrypt`, incluyendo las tablas:
 
-**Captura 9 - Validación de campos en productos**
+| Tabla | Descripción |
+|---|---|
+| `usuarios` | Guarda el identificador, nombre de usuario, nombre completo y hash de la contraseña. |
+| `intentoslogin` | Registra el usuario que intentó ingresar, si el acceso fue exitoso y la fecha del intento. |
 
-> **[ PEGAR CAPTURA AQUÍ ]**
-> Iconos de error (ErrorProvider) en nombre, precio y cantidad con datos inválidos.
+### Configuración y ejecución
 
-**Captura 10 - Confirmación al borrar**
+1. Abrir MySQL Workbench y conectarse al servidor MySQL.
+2. Abrir y ejecutar `Backup_parte3_parcial3.sql` para crear la base de datos y sus tablas.
+3. Revisar `Conexion.cs` y ajustar servidor, puerto, nombre de la base de datos, usuario y contraseña según la configuración local de MySQL.
+4. Abrir una terminal en la carpeta `Parte3_Login/Parte3_Login`.
+5. Restaurar los paquetes y ejecutar el proyecto:
 
-> **[ PEGAR CAPTURA AQUÍ ]**
-> Mensaje de confirmación antes de eliminar un producto.
+```bash
+dotnet restore
+dotnet run
+```
 
-## Controles utilizados
+El menú de consola permite seleccionar:
 
-| Control | Dónde se usa |
-| :--- | :--- |
-| `Form` (con `IsMdiContainer = true`) | `FrmPrincipal`, contenedor MDI de las demás ventanas |
-| `Panel` | Menú lateral, zona de usuario en la parte inferior y panel de búsqueda |
-| `Label` | Textos, reloj, fecha, usuario, dados, marcador y mensajes |
-| `Button` | Ingresar, Registrarme, menú lateral, Tirar dados, Nuevo juego, Guardar, Modificar, Limpiar y Borrar |
-| `TextBox` | Correo, contraseña, nombre, id, precio, cantidad y búsqueda |
-| `Timer` | Actualiza el reloj del menú lateral cada segundo |
-| `DataGridView` (con columnas de texto e imagen) | Lista de productos con miniaturas |
-| `PictureBox` | Imagen del producto y lupa de búsqueda |
-| `ImageList` | Íconos de los botones del CRUD |
-| `ErrorProvider` | Iconos de error de las validaciones |
-| `OpenFileDialog` | Elegir la imagen del producto |
-| `MessageBox` | Mensajes y confirmaciones |
+1. Registrar usuario.
+2. Iniciar sesión.
+3. Salir.
 
-## Guía de instalación y ejecución
+Al introducir una contraseña, el programa muestra asteriscos en la consola en lugar de mostrar los caracteres escritos.
 
-### Requisitos previos
+### Evidencias
 
-- Windows con **Visual Studio 2026** (carga de trabajo de escritorio con .NET) y **.NET Framework 4.7.2**.
-- **MySQL Server 8.0** y **MySQL Workbench**.
-- Conexión a internet la primera vez, para que Visual Studio restaure el paquete NuGet `MySql.Data`.
+**Registro de un usuario:** se muestra el ingreso de los datos y la confirmación de que el usuario fue registrado.
 
-### Pasos
+![Registro de usuario](imagenes_Captura%20de%20pantallas/Captura%20de%20pantalla%202026-11-09%20105849.png)
 
-1. **Clonar el repositorio:**
-   ```bash
-   git clone https://github.com/Kankibe/Parcial_practico.git
-   ```
-2. **Crear la base de datos:** abrir **MySQL Workbench**, conectarse con un usuario administrador (`root`) y ejecutar el archivo `Parcial_Practico.sql` (menú **File**, **Open SQL Script**, y luego el botón del rayo para ejecutarlo). Este único script, exportado con *Dump Structure and Data*, crea:
-   - La base de datos `lab_mvp`.
-   - Las tablas `usuarios` y `productos`, con datos de ejemplo.
-   - Los seis procedimientos almacenados (`sp_obtener_usuario`, `sp_insertar_usuario`, `sp_listar_productos`, `sp_insertar_producto`, `sp_actualizar_producto` y `sp_eliminar_producto`).
-   - El usuario `app_lab` con privilegios mínimos (solo ejecutar procedimientos).
-3. **Revisar la conexión:** abrir `Datos/Conexion.cs` y comprobar que el servidor, el puerto, el usuario y la contraseña coincidan con los del script:
-   ```csharp
-   private const string Servidor = "localhost";
-   private const string Puerto = "3306";
-   private const string BaseDatos = "lab_mvp";
-   private const string Usuario = "app_lab";
-   private const string Clave = "Lab_2026*";
-   ```
-4. **Abrir la solución:** abrir `LabMVP.slnx` en Visual Studio y esperar a que se restauren los paquetes NuGet.
-5. **Marcar el proyecto de inicio:** clic derecho sobre el proyecto `Presentacion`, **Establecer como proyecto de inicio**.
-6. **Ejecutar:** presionar `F5` o el botón **Iniciar**.
+**Inicio de sesión exitoso:** el sistema verifica la contraseña y muestra un mensaje de bienvenida.
 
-### Usuario de prueba
+![Inicio de sesión exitoso](imagenes_Captura%20de%20pantallas/Captura%20de%20pantalla%202026-11-09%20105857.png)
 
-| Campo | Valor |
-| :--- | :--- |
-| Correo | `admin@lab.com` |
-| Contraseña | `Admin123*` |
+**Intento de registro con usuario existente:** el sistema informa que no pudo registrar el usuario.
 
-También se pueden crear más usuarios desde la misma pantalla de login con el botón **Registrarme**.
+![Usuario existente](imagenes_Captura%20de%20pantallas/Captura%20de%20pantalla%202026-11-09%20105904.png)
 
-### Posibles problemas
+**Inicio de sesión fallido:** se muestra el mensaje correspondiente cuando la contraseña no coincide.
 
-- **"No se pudo conectar con la base de datos":** revisar que MySQL esté en ejecución y que el usuario y la clave de `Conexion.cs` coincidan con los del script.
-- **"PROCEDURE ... does not exist" o "Table ... doesn't exist":** falta ejecutar `Parcial_Practico.sql` en Workbench.
-- **"Access denied for user 'app_lab'":** el usuario no se creó o la clave de `Conexion.cs` no coincide; volver a ejecutar las dos últimas líneas de `Parcial_Practico.sql`.
-- **Error al procesar `FrmProductos.resx` ("marca de la Web"):** el archivo quedó bloqueado por Windows al descargarse. Se soluciona con clic derecho sobre el archivo (o el .zip), **Propiedades**, **Desbloquear**.
+![Inicio de sesión fallido](imagenes_Captura%20de%20pantallas/Captura%20de%20pantalla%202026-11-09%20105914.png)
 
-**Captura 11 - Ejecución de los scripts en MySQL Workbench**
-
-> **[ PEGAR CAPTURA AQUÍ ]**
-> Script `Parcial_Practico.sql` ejecutado y las tablas `usuarios` / `productos` con datos.
-
-**Captura 12 - Aplicación ejecutándose**
-
-> **[ PEGAR CAPTURA AQUÍ ]**
-> Aplicación iniciada desde Visual Studio con el usuario de prueba.
-
-## Documentación del código
-
-El código está comentado en español, con una descripción en cada clase y en cada método importante, explicando qué hace y por qué. Cada capa sigue una convención de nombres:
-
-- `E_` para entidades (`E_Usuario`, `E_Producto`).
-- `D_` para acceso a datos (`D_Usuario`, `D_Producto`).
-- `N_` para lógica de negocio (`N_Usuario`, `N_Producto`, `N_Craps`).
-- `I...View` para los contratos de las Vistas y `I...Service` para los contratos de Negocio.
-- `...Presenter` para los presentadores y `Frm...` para los formularios.
+---
 
 ## Información del estudiante
 
-Este laboratorio ha sido desarrollado por la estudiante de la Universidad Tecnológica de Panamá:
-
-**Nombre:** Kankibe González
-
-**Curso:** Herramientas de la Programación Aplicada III (.Net)
-
-**Grupo:** 1IL133
-
-**Instructora:** Ing. Irina Fong
-
-**Fecha:** 8 de noviembre de 2026
+**Nombre:** Kankibe González  
+**Asignatura:** Herramientas de la Programación Aplicada III (.Net)  
+**Grupo:** 1IL133  
+**Instructora:** Ing. Irina Fong  
+**Fecha de entrega:** 9 de noviembre de 2026
