@@ -1,0 +1,15 @@
+C:\Users\gonza\Downloads\Parcial3\Parcial3\Parte1_Figuras\bin\Debug\net8.0\Parte1_Figuras.exe
+C:\Users\gonza\Downloads\Parcial3\Parcial3\Parte1_Figuras\bin\Debug\net8.0\Parte1_Figuras.deps.json
+C:\Users\gonza\Downloads\Parcial3\Parcial3\Parte1_Figuras\bin\Debug\net8.0\Parte1_Figuras.runtimeconfig.json
+C:\Users\gonza\Downloads\Parcial3\Parcial3\Parte1_Figuras\bin\Debug\net8.0\Parte1_Figuras.dll
+C:\Users\gonza\Downloads\Parcial3\Parcial3\Parte1_Figuras\bin\Debug\net8.0\Parte1_Figuras.pdb
+C:\Users\gonza\Downloads\Parcial3\Parcial3\Parte1_Figuras\obj\Debug\net8.0\Parte1_Figuras.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\gonza\Downloads\Parcial3\Parcial3\Parte1_Figuras\obj\Debug\net8.0\Parte1_Figuras.AssemblyInfoInputs.cache
+C:\Users\gonza\Downloads\Parcial3\Parcial3\Parte1_Figuras\obj\Debug\net8.0\Parte1_Figuras.AssemblyInfo.cs
+C:\Users\gonza\Downloads\Parcial3\Parcial3\Parte1_Figuras\obj\Debug\net8.0\Parte1_Figuras.csproj.CoreCompileInputs.cache
+C:\Users\gonza\Downloads\Parcial3\Parcial3\Parte1_Figuras\obj\Debug\net8.0\Parte1_Figuras.dll
+C:\Users\gonza\Downloads\Parcial3\Parcial3\Parte1_Figuras\obj\Debug\net8.0\refint\Parte1_Figuras.dll
+C:\Users\gonza\Downloads\Parcial3\Parcial3\Parte1_Figuras\obj\Debug\net8.0\Parte1_Figuras.pdb
+C:\Users\gonza\Downloads\Parcial3\Parcial3\Parte1_Figuras\obj\Debug\net8.0\Parte1_Figuras.genruntimeconfig.cache
+C:\Users\gonza\Downloads\Parcial3\Parcial3\Parte1_Figuras\obj\Debug\net8.0\ref\Parte1_Figuras.dll
+C:\Users\gonza\Downloads\Parcial3\Parcial3\Parte1_Figuras\obj\Debug\net8.0\Parte1_F.74AB5989.Up2Date
