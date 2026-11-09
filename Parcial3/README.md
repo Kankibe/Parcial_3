@@ -17,7 +17,6 @@ Aplicación de escritorio en C# con Windows Forms que implementa el patrón de d
 | **Instructora** | Ing. Irina Fong |
 | **Estudiante** | Kankibe González |
 | **Fecha** | 8 de noviembre de 2026 |
-| **Repositorio** | [Kankibe/Parcial_practico](https://github.com/Kankibe/Parcial_practico) |
 
 ---
 
