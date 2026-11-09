@@ -5,7 +5,7 @@ namespace Parte3_Login
     public class Conexion
     {
         private static string cadenaConexion =
-            "Server=localhost;Port=3306;Database=LoginBCrypt;Uid=root;Pwd=Octubre28_;";
+            "Server=localhost;Port=3306;Database=LoginBCrypt;Uid=root;Pwd= ------- ;";
 
         public static MySqlConnection ObtenerConexion()
         {
